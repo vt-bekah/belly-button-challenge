@@ -28,7 +28,11 @@ $ git clone ...
 $ cd belly-button-challenge
 
 # Built With
-* ...
+* html
+* javascript
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 
 **Python Modules**
 * ...
