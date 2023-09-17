@@ -9,14 +9,15 @@ d3.json(url).then(function(data) {
   console.log("data", data)
 })
 
-// Initializes the page with a default plot
+// Store the drop down menu location for future use across functions
+let dropdownMenu = d3.select("#selDataset")
+
+// ## Function to initialize the page with a default plot
 function init() {
-  
-  // Update the dropdown menu based on the data
-  // Select the dropdown menu
-  let dropdownMenu = d3.select("#selDataset")
-  
+
   d3.json(url).then(function(data) {
+
+    // Update the dropdown menu based on the data
     // Store the subject IDs in a list (console log for debug)
     let dropdownList = data.names
     console.log("DD List: ", dropdownList)
@@ -25,32 +26,67 @@ function init() {
       dropdownMenu.append("option").text(id).property("value", id)
     })
 
+    // Read the current dropdown value in
+    let startSample = dropdownMenu.property("value")
+    console.log("starting sample", startSample)
+
+    // Grab all the chart data
+    let sampleDataAll = data.samples
+    // Filter the data based on the sample input
+    let sampleData = sampleDataAll.filter(dData => dData.id == startSample)[0]
+    // Set variables to contain the arrays required to create the chart information (console log for debug)
+    let sampleValues = sampleData.sample_values
+    console.log("starting chart data:", sampleValues)
+    let otuIDs = sampleData.otu_ids
+    console.log("starting chart IDs:", otuIDs)
+    let otuLabels = sampleData.otu_labels
+    console.log("starting chart labels:", otuLabels)
+
+    // Build initial charts using defined functions
+    buildHBarChart(sampleValues, otuIDs, otuLabels)
+    buildBubbleChart(sampleValues, otuIDs, otuLabels)
+
     // Grab the initialization chart data (console log for debug)
     let sampleZero = data.metadata[0].id
     console.log("sample zero", sampleZero)
 
-    // Build initial charts using defined functions
-    buildHBarChart(sampleZero)
-    buildHBubbleChart(sampleZero)
     buildDemographics(sampleZero)
-
   })
 }
 
 // Captures a change in dropdown and updates charts and tables
 d3.selectAll("#selDataset").on("change", updateChartsTable)
 
-// Function to update the charts based on value change in dropdown menu
+// ## Function to update the charts based on value change in dropdown menu
 function updateChartsTable() {
-  // Use D3 to select the dropdown menu
-  let ddMenu = d3.select("#selDataset")
+
   // Assign the value of the dropdown menu option to a variable
-  let newSample = ddMenu.property("value")
+  let newSample = dropdownMenu.property("value")
   console.log("new sample", newSample)
 
-  // Update charts 
-  buildHBarChart(newSample)
-  buildHBubbleChart(newSample)
+  // Get the new sample data & update the charts
+  d3.json(url).then(function(data) {
+    // Grab all the new chart data
+    let sampleDataAll = data.samples
+    // Filter the data based on the new sample input
+    let sampleData = sampleDataAll.filter(dData => dData.id == newSample)[0]
+    // Set variables to contain the arrays required to create the chart information (console log for debug)
+    let sampleValues = sampleData.sample_values
+    console.log("new chart data:", sampleValues)
+    let otuIDs = sampleData.otu_ids
+    console.log("new chart IDs:", otuIDs)
+    let otuLabels = sampleData.otu_labels
+    console.log("new chart labels:", otuLabels)
+
+    // Update bar chart with new data using restyle
+    Plotly.restyle("bar", "x", [sampleValues.slice(0,10).reverse()])
+    Plotly.restyle("bar", "y", [otuIDs.slice(0,10).map(id => `OTU ${id}`).reverse()])
+    Plotly.restyle("bar", "text", [otuLabels.slice(0,10).reverse()])
+    // Update bubble chart with new data using restyle
+    Plotly.restyle("bubble", "x", [otuIDs])
+    Plotly.restyle("bubble", "y", [sampleValues])
+    Plotly.restyle("bubble", "text", [otuLabels])
+  })
 
   // Delete old demographics info and populate new
   let demoBody = d3.select("#sample-metadata")
@@ -58,59 +94,32 @@ function updateChartsTable() {
   buildDemographics(newSample)
 }
 
-// Function to build the horizontal bar chart
-function buildHBarChart(sample) {
+// ## Function to build the horizontal bar chart
+function buildHBarChart(sampleValues, otuIDs, otuLabels) {
   
-  d3.json(url).then(function(data) {
+  // set the chart trace data
+  barData = [{
+    x: sampleValues.slice(0,10).reverse(),
+    y: otuIDs.slice(0,10).map(id => `OTU ${id}`).reverse(),
+    text: otuLabels.slice(0,10).reverse(),
+    type: "bar",
+    orientation: "h"
+  }]
   
-    // Grab all the chart data
-    let sampleDataAll = data.samples
-    // Filter the data based on the sample input
-    let sampleData = sampleDataAll.filter(dData => dData.id == sample)[0]
-    // Set variables to contain the arrays required to create the chart information (console log for debug)
-    let sampleValues = sampleData.sample_values
-    console.log("bar chart data:", sampleValues)
-    let otuIDs = sampleData.otu_ids
-    console.log("bar chart labels:", otuIDs)
-    let otuLabels = sampleData.otu_labels
-    console.log("bar chart hover:", otuLabels)
-    
-    // set the chart trace data
-    barData = [{
-      x: sampleValues.slice(0,10).reverse(),
-      y: otuIDs.slice(0,10).map(id => `OTU ${id}`).reverse(),
-      text: otuLabels.slice(0,10).reverse(),
-      type: "bar",
-      orientation: "h"
-    }]
-    
-    // set layout for bubble chart
-    let layout = {
-      title: "Top Ten Bacteria",
-      xaxis:{title: "Count of Bacteria"}
-    }
-    
-    // plot in the designated spot in index.html
-    Plotly.newPlot("bar", barData, layout)
-    })
+  // set layout for bubble chart
+  let layout = {
+    title: "Top Ten Bacteria",
+    xaxis:{title: "Count of Bacteria"}
+  }
+  
+  // plot in the designated spot in index.html
+  Plotly.newPlot("bar", barData, layout)
 }
 
-// Build the bubble chart
-function buildHBubbleChart(sample) {
+// ## Function to build the bubble chart
+function buildBubbleChart(sampleValues, otuIDs, otuLabels) {
   
   d3.json(url).then(function(data) {
-
-    // Grab all the chart data
-    let sampleDataAll = data.samples
-    // Filter the data based on the sample input
-    let sampleData = sampleDataAll.filter(dData => dData.id == sample)[0]
-    // Set variables to contain the arrays required to create the chart information (console log for debug)
-    let sampleValues = sampleData.sample_values
-    console.log("bubble chart data:", sampleValues)
-    let otuIDs = sampleData.otu_ids
-    console.log("bubble chart labels:", otuIDs)
-    let otuLabels = sampleData.otu_labels
-    console.log("bubble chart hover:", otuLabels)
     
     // set the chart trace data
     bubbleData = [{
@@ -137,7 +146,7 @@ function buildHBubbleChart(sample) {
   })
 }
 
-// Build the demographic info box
+// ## Function to build the demographic info box
 function buildDemographics(sample) {
   
   d3.json(url).then(function(data) {
