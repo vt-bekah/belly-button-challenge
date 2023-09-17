@@ -37,8 +37,25 @@ function init() {
   })
 }
 
-function filterID(datum, id) {
-  return datum.id == id
+// Captures a change in dropdown and updates charts and tables
+d3.selectAll("#selDataset").on("change", updateChartsTable);
+
+// Update the restyled plot's values
+function updateChartsTable() {
+  // Use D3 to select the dropdown menu
+  let ddMenu = d3.select("#selDataset")
+  // Assign the value of the dropdown menu option to a variable
+  let newSample = ddMenu.property("value")
+  console.log("new sample", newSample)
+
+  // Update charts using Plotly restyle
+  Plotly.restyle("bar", "values", [newSample])
+  Plotly.restyle("bubble", "values", [newSample])
+
+  // Delete old demographics info and populate new
+  let demoBody = d3.select('#sample-metadata')
+  demoBody.selectAll("p").remove()
+  buildDemographics(newSample)
 }
 
 // Build the horizontal bar chart
@@ -126,7 +143,7 @@ function buildDemographics(sample) {
       console.log("demo data", demoData)
 
       // add data under Demographic info h3
-      let demoBody = d3.select('#sample-metadata');
+      let demoBody = d3.select('#sample-metadata')
       
       for (i=0; i < demoLabels.length; i++){
           // Append one itemper label and data combo
