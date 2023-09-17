@@ -48,9 +48,11 @@ function updateChartsTable() {
   let newSample = ddMenu.property("value")
   console.log("new sample", newSample)
 
-  // Update charts using Plotly restyle
-  Plotly.restyle("bar", "values", [newSample])
-  Plotly.restyle("bubble", "values", [newSample])
+  // Update charts 
+  // Plotly.restyle("bar", "values", [newSample])
+  // Plotly.restyle("bubble", "values", [newSample])
+  buildHBarChart(newSample)
+  buildHBubbleChart(newSample)
 
   // Delete old demographics info and populate new
   let demoBody = d3.select('#sample-metadata')
