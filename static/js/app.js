@@ -86,6 +86,7 @@ function buildHBarChart(sample) {
       
       // set layout for bubble chart
       let layout = {
+        title: "Top Ten Bacteria",
         xaxis:{title: "Count of Bacteria"}
       }
       
@@ -126,6 +127,7 @@ function buildHBubbleChart(sample) {
       
       // set layout for bubble chart
       let layout = {
+        title: "All Bacteria by ID",
         xaxis:{title: "OTU ID"},
         yaxis:{title: "Count of Bacteria"}
       }
