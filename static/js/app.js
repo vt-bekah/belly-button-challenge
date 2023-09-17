@@ -63,35 +63,35 @@ function buildHBarChart(sample) {
   
   d3.json(url).then(function(data) {
   
-      // Grab all the chart data
-      let sampleDataAll = data.samples
-      // Filter the data based on the sample input
-      let sampleData = sampleDataAll.filter(dData => dData.id == sample)[0]
-      // Set variables to contain the arrays required to create the chart information (console log for debug)
-      let sampleValues = sampleData.sample_values
-      console.log("bar chart data:", sampleValues)
-      let otuIDs = sampleData.otu_ids
-      console.log("bar chart labels:", otuIDs)
-      let otuLabels = sampleData.otu_labels
-      console.log("bar chart hover:", otuLabels)
-      
-      // set the chart trace data
-      barData = [{
-        x: sampleValues.slice(0,10).reverse(),
-        y: otuIDs.slice(0,10).map(id => `OTU ${id}`).reverse(),
-        text: otuLabels.slice(0,10).reverse(),
-        type: "bar",
-        orientation: "h"
-      }]
-      
-      // set layout for bubble chart
-      let layout = {
-        title: "Top Ten Bacteria",
-        xaxis:{title: "Count of Bacteria"}
-      }
-      
-      // plot in the designated spot in index.html
-      Plotly.newPlot("bar", barData, layout)
+    // Grab all the chart data
+    let sampleDataAll = data.samples
+    // Filter the data based on the sample input
+    let sampleData = sampleDataAll.filter(dData => dData.id == sample)[0]
+    // Set variables to contain the arrays required to create the chart information (console log for debug)
+    let sampleValues = sampleData.sample_values
+    console.log("bar chart data:", sampleValues)
+    let otuIDs = sampleData.otu_ids
+    console.log("bar chart labels:", otuIDs)
+    let otuLabels = sampleData.otu_labels
+    console.log("bar chart hover:", otuLabels)
+    
+    // set the chart trace data
+    barData = [{
+      x: sampleValues.slice(0,10).reverse(),
+      y: otuIDs.slice(0,10).map(id => `OTU ${id}`).reverse(),
+      text: otuLabels.slice(0,10).reverse(),
+      type: "bar",
+      orientation: "h"
+    }]
+    
+    // set layout for bubble chart
+    let layout = {
+      title: "Top Ten Bacteria",
+      xaxis:{title: "Count of Bacteria"}
+    }
+    
+    // plot in the designated spot in index.html
+    Plotly.newPlot("bar", barData, layout)
     })
 }
 
@@ -100,40 +100,40 @@ function buildHBubbleChart(sample) {
   
   d3.json(url).then(function(data) {
 
-      // Grab all the chart data
-      let sampleDataAll = data.samples
-      // Filter the data based on the sample input
-      let sampleData = sampleDataAll.filter(dData => dData.id == sample)[0]
-      // Set variables to contain the arrays required to create the chart information (console log for debug)
-      let sampleValues = sampleData.sample_values
-      console.log("bubble chart data:", sampleValues)
-      let otuIDs = sampleData.otu_ids
-      console.log("bubble chart labels:", otuIDs)
-      let otuLabels = sampleData.otu_labels
-      console.log("bubble chart hover:", otuLabels)
-      
-      // set the chart trace data
-      bubbleData = [{
-        x: otuIDs,
-        y: sampleValues,
-        text: otuLabels,
-        mode: "markers",
-        marker: {
-          size: sampleValues,
-          color: otuIDs,
-          colorscale: "Earth"
-        }
-      }]
-      
-      // set layout for bubble chart
-      let layout = {
-        title: "All Bacteria by ID",
-        xaxis:{title: "OTU ID"},
-        yaxis:{title: "Count of Bacteria"}
+    // Grab all the chart data
+    let sampleDataAll = data.samples
+    // Filter the data based on the sample input
+    let sampleData = sampleDataAll.filter(dData => dData.id == sample)[0]
+    // Set variables to contain the arrays required to create the chart information (console log for debug)
+    let sampleValues = sampleData.sample_values
+    console.log("bubble chart data:", sampleValues)
+    let otuIDs = sampleData.otu_ids
+    console.log("bubble chart labels:", otuIDs)
+    let otuLabels = sampleData.otu_labels
+    console.log("bubble chart hover:", otuLabels)
+    
+    // set the chart trace data
+    bubbleData = [{
+      x: otuIDs,
+      y: sampleValues,
+      text: otuLabels,
+      mode: "markers",
+      marker: {
+        size: sampleValues,
+        color: otuIDs,
+        colorscale: "Earth"
       }
+    }]
+    
+    // set layout for bubble chart
+    let layout = {
+      title: "All Bacteria by ID",
+      xaxis:{title: "OTU ID"},
+      yaxis:{title: "Count of Bacteria"}
+    }
 
-      // plot in the designated spot in index.html
-      Plotly.newPlot("bubble", bubbleData, layout)
+    // plot in the designated spot in index.html
+    Plotly.newPlot("bubble", bubbleData, layout)
   })
 }
 
@@ -142,26 +142,26 @@ function buildDemographics(sample) {
   
   d3.json(url).then(function(data) {
     
-      // Grab the demographic info data
-      let demoDataAll = data.metadata
-      // filter the data for the specific sample (console log for debug)
-      let demographicData = demoDataAll.filter(dData => dData.id == sample)[0]
-      console.log("demographic info:", demographicData)
-      // Create an array of the keys and values (console log for debug)
-      let demoLabels = Object.keys(demographicData)
-      let demoData = Object.values(demographicData)
-      console.log("demo labels:", demoLabels)
-      console.log("demo data:", demoData)
+    // Grab the demographic info data
+    let demoDataAll = data.metadata
+    // filter the data for the specific sample (console log for debug)
+    let demographicData = demoDataAll.filter(dData => dData.id == sample)[0]
+    console.log("demographic info:", demographicData)
+    // Create an array of the keys and values (console log for debug)
+    let demoLabels = Object.keys(demographicData)
+    let demoData = Object.values(demographicData)
+    console.log("demo labels:", demoLabels)
+    console.log("demo data:", demoData)
 
-      // add data under Demographic info h3
-      let demoBody = d3.select("#sample-metadata")
-      
-      for (i=0; i < demoLabels.length; i++){
-          // Append one item per label and data combo
-          // I chose paragraph to have spacing between each (vs. body) without idention (vs. unordered list)
-          demoBody.append("p").text(`${demoLabels[i]}: ${demoData[i]}`)
-      }
-  
+    // add data under Demographic info h3
+    let demoBody = d3.select("#sample-metadata")
+    
+    for (i=0; i < demoLabels.length; i++){
+        // Append one item per label and data combo
+        // I chose paragraph to have spacing between each (vs. body) without idention (vs. unordered list)
+        demoBody.append("p").text(`${demoLabels[i]}: ${demoData[i]}`)
+    }
+
   })
 }
 
