@@ -26,10 +26,19 @@ function init() {
     })
 
     // Grab the initialization chart data
-    let sampleChartZero = data.samples[0]
-    let sampleDemoZero = data.metadata[0]
+    let sampleZero = data.metadata[0].id
+    console.log("sample zero", sampleZero)
+
+    // Build initial charts using defined functions
+    buildHBarChart(sampleZero)
+    buildHBubbleChart(sampleZero)
+    buildDemographics(sampleZero)
 
   })
+}
+
+function filterID(datum, id) {
+  return datum.id == id
 }
 
 // Build the horizontal bar chart
@@ -37,8 +46,10 @@ function buildHBarChart(sample) {
   
   d3.json(url).then(function(data) {
   
+      // Grab all the chart data
+      let sampleDataAll = data.samples
       // Grab the chart data
-      let sampleData = data.samples[0]
+      let sampleData = sampleDataAll.filter(dData => dData.id == sample)[0]
 
       let sampleValues = sampleData.sample_values
       console.log("bar chart data: )", sampleValues)
@@ -66,9 +77,11 @@ function buildHBarChart(sample) {
 function buildHBubbleChart(sample) {
   
   d3.json(url).then(function(data) {
-  
+
+      // Grab all the chart data
+      let sampleDataAll = data.samples
       // Grab the chart data
-      let sampleData = data.samples[0]
+      let sampleData = sampleDataAll.filter(dData => dData.id == sample)[0]
 
       let sampleValues = sampleData.sample_values
       console.log("bubble chart data: )", sampleValues)
@@ -100,9 +113,12 @@ function buildHBubbleChart(sample) {
 function buildDemographics(sample) {
   
   d3.json(url).then(function(data) {
-  
+    
       // Grab the demographic info data
-      let demographicData = data.metadata[0]
+      let demoDataAll = data.metadata
+      // filter the data for the specific sample
+      let demographicData = demoDataAll.filter(dData => dData.id == sample)[0]
+
       console.log("demographic info: )", demographicData)
       let demoLabels = Object.keys(demographicData)
       let demoData = Object.values(demographicData)
@@ -122,6 +138,4 @@ function buildDemographics(sample) {
 }
 
 init()
-buildHBarChart()
-buildHBubbleChart()
-buildDemographics()
+
