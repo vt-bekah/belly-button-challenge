@@ -25,17 +25,9 @@ function init() {
       dropdownMenu.append("option").text(id).property("value", id)
     })
 
-    // // Grab the chart data
-    // let sampleValues = data.samples.map(value => value.sample_values)[0]
-    // console.log("bar chart data: )", sampleValues)
-    // let otuIDs = data.samples.map(value => value.otu_ids)[0]
-    // console.log("bar chart labels: )", otuIDs)
-    // let outLabels = data.samples.map(value => value.otu_labels)[0]
-    // console.log("bar chart hover: )", outLabels)
-    
-    // // Grab the demographic data
-    // let demographicData = data.metadata[0]
-    // console.log("demographic info: )", demographicData)
+    // Grab the initialization chart data
+    let sampleChartZero = data.samples[0]
+    let sampleDemoZero = data.metadata[0]
 
   })
 }
@@ -46,7 +38,6 @@ function buildHBarChart(sample) {
   d3.json(url).then(function(data) {
   
       // Grab the chart data
-
       let sampleData = data.samples[0]
 
       let sampleValues = sampleData.sample_values
@@ -56,6 +47,7 @@ function buildHBarChart(sample) {
       let otuLabels = sampleData.otu_labels
       console.log("bar chart hover: )", otuLabels)
       
+      // set the chart trace data
       barData = [{
         x: sampleValues.slice(0,10).reverse(),
         y: otuIDs.slice(0,10).map(id => `OTU ${id}`).reverse(),
@@ -63,7 +55,8 @@ function buildHBarChart(sample) {
         type: "bar",
         orientation: "h"
       }];
-    
+      
+      // plot in the designated spot in index.html
       Plotly.newPlot("bar", barData);
   
     })
@@ -75,16 +68,16 @@ function buildHBubbleChart(sample) {
   d3.json(url).then(function(data) {
   
       // Grab the chart data
-
       let sampleData = data.samples[0]
 
       let sampleValues = sampleData.sample_values
-      console.log("bar chart data: )", sampleValues)
+      console.log("bubble chart data: )", sampleValues)
       let otuIDs = sampleData.otu_ids
-      console.log("bar chart labels: )", otuIDs)
+      console.log("bubble chart labels: )", otuIDs)
       let otuLabels = sampleData.otu_labels
-      console.log("bar chart hover: )", otuLabels)
+      console.log("bubble chart hover: )", otuLabels)
       
+      // set the chart trace data
       bubbleData = [{
         x: otuIDs,
         y: sampleValues,
@@ -97,7 +90,33 @@ function buildHBubbleChart(sample) {
         }
       }];
     
+      // plot in the designated spot in index.html
       Plotly.newPlot("bubble", bubbleData);
+  
+  })
+}
+
+// Build the demographic info box
+function buildDemographics(sample) {
+  
+  d3.json(url).then(function(data) {
+  
+      // Grab the demographic info data
+      let demographicData = data.metadata[0]
+      console.log("demographic info: )", demographicData)
+      let demoLabels = Object.keys(demographicData)
+      let demoData = Object.values(demographicData)
+      console.log("demo labels", demoLabels)
+      console.log("demo data", demoData)
+
+      // add data under Demographic info h3
+      let demoBody = d3.select('#sample-metadata');
+      
+      for (i=0; i < demoLabels.length; i++){
+          // Append one itemper label and data combo
+          // I chose paragraph to have spacing between each (vs. body) without idention (vs. list)
+          demoBody.append("p").text(`${demoLabels[i]}: ${demoData[i]}`)
+      }
   
   })
 }
@@ -105,4 +124,4 @@ function buildHBubbleChart(sample) {
 init()
 buildHBarChart()
 buildHBubbleChart()
-
+buildDemographics()
