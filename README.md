@@ -20,6 +20,9 @@ This repository contains files for UT DAV Bootcamp Module 13 Mini-Project ETL
 * Deploy the website to https://vt-bekah.github.io/ (GitHub Pages)
 Example View: <br> ![Example View](./images/bellybutton_website1439.png)
 
+# References
+Hulcr, J. et al. (2012) A Jungle in There: Bacteria in Belly Buttons are Highly Diverse, but Predictable. Retrieved from: http://robdunnlab.com/projects/belly-button-biodiversity/results-and-data/.
+
 # Getting Started
 
 ## Prerequisites
