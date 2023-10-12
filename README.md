@@ -17,7 +17,7 @@ This repository contains files for UT DAV Bootcamp Module 13 Mini-Project ETL
   * Bubble chart that displays each sample
   * Metadata display with individual's demographic information (both names and values)
 * Update all data webpage when a new sample ID is selected from the dropdown menu
-* Deploy the website to https://vt-bekah.github.io/ (GitHub Pages)
+* Deploy the website to https://vt-bekah.github.io/belly-button-challenge/ (GitHub Pages)
 Example View: <br> ![Example View](./images/bellybutton_website1439.png)
 
 # References
